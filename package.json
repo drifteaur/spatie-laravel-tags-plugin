@@ -1,0 +1,9 @@
+{
+    "private": true,
+    "scripts": {
+        "build": "esbuild resources/js/components/spatie-tags-input.js --bundle --minify --format=esm --outfile=dist/components/spatie-tags-input.js"
+    },
+    "devDependencies": {
+        "esbuild": "^0.20.0"
+    }
+}
