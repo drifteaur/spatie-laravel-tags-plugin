@@ -142,39 +142,60 @@
 
                 <div wire:ignore>
                     <template x-cloak x-if="state?.length">
-                        <div
-                            @if ($isReorderable)
-                                x-on:end.stop="reorderTags($event)"
-                                x-sortable
-                                data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
-                            @endif
-                            class="fi-fo-tags-input-tags-ctn"
-                        >
-                            <template
-                                x-for="(tag, index) in state"
-                                x-bind:key="`${tag}-${index}`"
+                        <div style="position: relative;">
+                            <div
+                                @if ($isReorderable)
+                                    x-on:end.stop="reorderTags($event)"
+                                    x-sortable
+                                    data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
+                                @endif
+                                class="fi-fo-tags-input-tags-ctn"
+                                style="padding-right: 2rem;"
                             >
-                                <x-filament::badge
-                                    :color="$color"
-                                    :x-bind:x-sortable-item="$isReorderable ? 'index' : null"
-                                    :x-sortable-handle="$isReorderable ? '' : null"
-                                    @class([
-                                        'fi-reorderable' => $isReorderable,
-                                    ])
+                                <template
+                                    x-for="(tag, index) in state"
+                                    x-bind:key="`${tag}-${index}`"
                                 >
-                                    {{ $getTagPrefix() }}
+                                    <x-filament::badge
+                                        :color="$color"
+                                        :x-bind:x-sortable-item="$isReorderable ? 'index' : null"
+                                        :x-sortable-handle="$isReorderable ? '' : null"
+                                        @class([
+                                            'fi-reorderable' => $isReorderable,
+                                        ])
+                                    >
+                                        {{ $getTagPrefix() }}
 
-                                    <span x-text="tag"></span>
+                                        <span x-text="tag"></span>
 
-                                    {{ $getTagSuffix() }}
+                                        {{ $getTagSuffix() }}
 
-                                    <x-slot
-                                        name="deleteButton"
-                                        x-on:click.stop="deleteTag(tag)"
-                                        :x-bind:aria-label="'\'' . __('filament-forms::components.tags_input.actions.delete.label') . ': \' + tag'"
-                                    ></x-slot>
-                                </x-filament::badge>
-                            </template>
+                                        <x-slot
+                                            name="deleteButton"
+                                            x-on:click.stop="deleteTag(tag)"
+                                            :x-bind:aria-label="'\'' . __('filament-forms::components.tags_input.actions.delete.label') . ': \' + tag'"
+                                        ></x-slot>
+                                    </x-filament::badge>
+                                </template>
+                            </div>
+
+                            @unless ($isDisabled)
+                                <button
+                                    type="button"
+                                    x-on:click="copyTags()"
+                                    style="position: absolute; top: 50%; right: 0.375rem; transform: translateY(-50%);"
+                                    class="inline-flex items-center justify-center rounded-md p-1 text-gray-400 transition hover:text-gray-500 focus:outline-none dark:text-gray-500 dark:hover:text-gray-400"
+                                    title="{{ __('Copy tags') }}"
+                                >
+                                    <svg x-show="!showCopiedFeedback" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="color: inherit;">
+                                        <path d="M7 3.5A1.5 1.5 0 018.5 2h3.879a1.5 1.5 0 011.06.44l3.122 3.12A1.5 1.5 0 0117 6.622V12.5a1.5 1.5 0 01-1.5 1.5h-1v-3.379a3 3 0 00-.879-2.121L10.5 5.379A3 3 0 008.379 4.5H7v-1z" />
+                                        <path d="M4.5 6A1.5 1.5 0 003 7.5v9A1.5 1.5 0 004.5 18h7a1.5 1.5 0 001.5-1.5v-5.879a1.5 1.5 0 00-.44-1.06L9.44 6.44A1.5 1.5 0 008.378 6H4.5z" />
+                                    </svg>
+                                    <svg x-show="showCopiedFeedback" x-cloak xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="color: #22c55e;">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            @endunless
                         </div>
                     </template>
                 </div>

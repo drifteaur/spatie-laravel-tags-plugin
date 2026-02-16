@@ -11,6 +11,7 @@ export default function spatieTagsInputFormComponent({
     return {
         newTag: '',
         state,
+        showCopiedFeedback: false,
 
         // Search state
         searchResults: null,
@@ -53,6 +54,19 @@ export default function spatieTagsInputFormComponent({
             const reordered = this.state.splice(event.oldIndex, 1)[0]
             this.state.splice(event.newIndex, 0, reordered)
             this.state = [...this.state]
+        },
+
+        async copyTags() {
+            if (!this.state?.length) {
+                return
+            }
+
+            const text = this.state.join(', ')
+            await navigator.clipboard.writeText(text)
+            this.showCopiedFeedback = true
+            setTimeout(() => {
+                this.showCopiedFeedback = false
+            }, 2000)
         },
 
         selectResult(result) {
@@ -206,12 +220,13 @@ export default function spatieTagsInputFormComponent({
             },
             ['x-on:paste']() {
                 this.$nextTick(() => {
-                    if (splitKeys.length === 0) {
-                        this.createTag()
-                        return
-                    }
+                    // Always split by comma, plus any configured splitKeys
+                    const allSplitChars = [
+                        ',',
+                        ...splitKeys.filter((k) => k !== ','),
+                    ]
 
-                    const pattern = splitKeys
+                    const pattern = allSplitChars
                         .map((key) =>
                             key.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&'),
                         )
